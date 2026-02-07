@@ -21,3 +21,80 @@
 mat-toolbar {
   border-bottom: 1px solid #e5e7eb;
 }
+
+.report-panel {
+  margin-top: 0.5rem;
+}
+
+.report-stat {
+  padding: 1rem;
+  border-radius: 0.9rem;
+  border: 1px solid #e5e7eb;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.report-stat p {
+  margin: 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.report-stat h4 {
+  margin: 0.4rem 0 0;
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #004643;
+}
+
+.report-loading,
+.report-empty {
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  color: #64748b;
+  text-align: center;
+}
+
+.report-empty mat-icon {
+  color: #9ca3af;
+}
+
+.report-table {
+  min-width: 680px;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.report-table th,
+.report-table td {
+  padding: 0.8rem 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.report-table th {
+  color: #475569;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-align: left;
+}
+
+.report-table td {
+  color: #1f2937;
+  font-weight: 500;
+}
+
+.code-pill {
+  display: inline-block;
+  padding: 0.2rem 0.45rem;
+  border-radius: 0.45rem;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.72rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}

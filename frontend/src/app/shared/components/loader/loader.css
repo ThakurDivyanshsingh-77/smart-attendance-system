@@ -1,0 +1,15 @@
+.loader-wrap {
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  color: #004643;
+}
+
+.loader-wrap p {
+  margin: 0;
+  color: #475569;
+  font-weight: 500;
+}

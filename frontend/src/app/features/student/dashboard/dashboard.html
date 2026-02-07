@@ -37,7 +37,7 @@
           <h1 class="text-3xl md:text-4xl font-black text-[#004643]">
             Hello, {{ firstName }}! 👋
           </h1>
-          <button mat-icon-button (click)="fetchStats()" [disabled]="loading" 
+          <button mat-icon-button (click)="refreshDashboard()" [disabled]="loading" 
                   class="bg-white shadow-sm border border-gray-200 text-[#004643]">
             <mat-icon [class.animate-spin]="loading">refresh</mat-icon>
           </button>
@@ -152,6 +152,73 @@
 
       </div>
     </div>
+
+
+    <section class="report-panel bg-white rounded-[2rem] shadow-sm border border-gray-100 p-6 md:p-8">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
+        <div>
+          <h3 class="text-xl font-black text-[#004643] flex items-center gap-2">
+            <mat-icon>assessment</mat-icon>
+            Student Report
+          </h3>
+          <p class="text-sm text-gray-500 mt-1">Read-only summary generated from your attendance records.</p>
+        </div>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#004643]/10 text-[#004643] text-xs font-bold uppercase tracking-wide">
+          <mat-icon class="text-base">lock</mat-icon>
+          Read only
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div class="report-stat">
+          <p>Total Classes</p>
+          <h4>{{ stats.totalClasses }}</h4>
+        </div>
+        <div class="report-stat">
+          <p>Classes Attended</p>
+          <h4>{{ stats.present }}</h4>
+        </div>
+        <div class="report-stat">
+          <p>Attendance Percentage</p>
+          <h4>{{ stats.percentage }}%</h4>
+        </div>
+      </div>
+
+      <div *ngIf="reportLoading" class="report-loading">
+        <mat-spinner diameter="32"></mat-spinner>
+        <span>Loading subject-wise report...</span>
+      </div>
+
+      <div *ngIf="!reportLoading && subjectReport.length > 0" class="overflow-x-auto">
+        <table class="w-full report-table">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Code</th>
+              <th class="text-center">Attended</th>
+              <th class="text-center">Total</th>
+              <th class="text-right">Percentage</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of subjectReport">
+              <td>{{ item.subjectName }}</td>
+              <td><span class="code-pill">{{ item.subjectCode }}</span></td>
+              <td class="text-center">{{ item.attended }}</td>
+              <td class="text-center">{{ item.total }}</td>
+              <td class="text-right font-bold" [class.text-emerald-700]="item.percentage >= 75" [class.text-amber-700]="item.percentage < 75">
+                {{ item.percentage }}%
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div *ngIf="!reportLoading && subjectReport.length === 0" class="report-empty">
+        <mat-icon>history_toggle_off</mat-icon>
+        <p>Subject-wise report will appear once attendance records are available.</p>
+      </div>
+    </section>
 
   </div>
 </div>

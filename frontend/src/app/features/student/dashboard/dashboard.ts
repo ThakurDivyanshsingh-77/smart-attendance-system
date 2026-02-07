@@ -7,12 +7,19 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // 🔥 IMP: Spinner Module
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AuthService, User } from '../../../core/services/auth';
 import { AttendanceService } from '../../../core/services/attendance.service';
+
+interface SubjectReportItem {
+  subjectName: string;
+  subjectCode: string;
+  attended: number;
+  total: number;
+  percentage: number;
+}
 
 @Component({
   selector: 'app-student-dashboard',
@@ -24,65 +31,118 @@ import { AttendanceService } from '../../../core/services/attendance.service';
     MatIconModule,
     MatMenuModule,
     MatButtonModule,
-    MatCardModule,
     MatProgressBarModule,
-    MatProgressSpinnerModule // 🔥 Isko yahan hona zaroori hai
+    MatProgressSpinnerModule,
   ],
   templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.css']
+  styleUrls: ['./dashboard.css'],
 })
 export class StudentDashboardComponent implements OnInit {
-
   user: User | null = null;
-  stats: any = {
+  stats: { percentage: number; totalClasses: number; present: number; absent: number } = {
     percentage: 0,
     totalClasses: 0,
     present: 0,
-    absent: 0
+    absent: 0,
   };
-  loading = true; // Default loading true
+
+  loading = true;
+  reportLoading = true;
   currentDate = new Date();
+  subjectReport: SubjectReportItem[] = [];
 
   constructor(
     private auth: AuthService,
     private attendance: AttendanceService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
     this.user = this.auth.getCurrentUser();
-    this.fetchStats();
+    this.refreshDashboard();
   }
 
   get firstName(): string {
-    if (!this.user || !this.user.name) {
+    if (!this.user?.name) {
       return 'Student';
     }
     return this.user.name.split(' ')[0];
   }
 
-  fetchStats() {
+  refreshDashboard(): void {
+    this.fetchStats();
+    this.fetchSubjectReport();
+  }
+
+  private fetchStats(): void {
     this.loading = true;
-    
+
     this.attendance.getStudentStats().subscribe({
       next: (res) => {
-        console.log('✅ Stats Loaded:', res);
         if (res.success) {
           this.stats = {
             percentage: res.percentage || 0,
             totalClasses: res.totalClasses || 0,
             present: res.present || 0,
-            absent: res.absent || 0
+            absent: res.absent || 0,
           };
         }
-        this.loading = false; // Stop spinner
+        this.loading = false;
       },
-      error: (err) => {
-        console.error('❌ Failed to load stats', err);
-        // Agar error aaye tab bhi spinner band karo
-        this.loading = false; 
-      }
+      error: () => {
+        this.loading = false;
+      },
     });
+  }
+
+  private fetchSubjectReport(): void {
+    this.reportLoading = true;
+
+    this.attendance.getStudentHistory().subscribe({
+      next: (res) => {
+        const history = Array.isArray(res?.history) ? res.history : [];
+        this.subjectReport = this.buildSubjectReport(history);
+        this.reportLoading = false;
+      },
+      error: () => {
+        this.subjectReport = [];
+        this.reportLoading = false;
+      },
+    });
+  }
+
+  private buildSubjectReport(history: any[]): SubjectReportItem[] {
+    const subjectMap = new Map<string, SubjectReportItem>();
+
+    history.forEach((record) => {
+      const subject = record?.session?.subject;
+      const subjectId = subject?._id || subject?.code || subject?.name;
+
+      if (!subjectId) {
+        return;
+      }
+
+      if (!subjectMap.has(subjectId)) {
+        subjectMap.set(subjectId, {
+          subjectName: subject?.name || 'Unknown Subject',
+          subjectCode: subject?.code || '---',
+          attended: 0,
+          total: 0,
+          percentage: 0,
+        });
+      }
+
+      const item = subjectMap.get(subjectId)!;
+      item.total += 1;
+      item.attended += 1;
+    });
+
+    return Array.from(subjectMap.values())
+      .map((item) => ({
+        ...item,
+        percentage: item.total > 0 ? Math.round((item.attended / item.total) * 100) : 0,
+      }))
+      .sort((a, b) => b.percentage - a.percentage);
   }
 
   markAttendance(): void {
