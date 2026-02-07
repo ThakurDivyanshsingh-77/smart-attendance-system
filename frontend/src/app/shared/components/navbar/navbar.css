@@ -1,0 +1,54 @@
+.navbar-shell {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 70, 67, 0.15);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 800;
+  color: #004643;
+}
+
+.brand-icon {
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.7rem;
+  background: #004643;
+  color: #fff;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.link-btn,
+.cta-btn {
+  padding: 0.45rem 0.8rem;
+  border-radius: 0.65rem;
+  font-weight: 600;
+}
+
+.link-btn {
+  color: #004643;
+}
+
+.cta-btn {
+  background: #004643;
+  color: #fff;
+}

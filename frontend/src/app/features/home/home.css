@@ -1,5 +1,16 @@
-/* Animation Keyframes */
-@keyframes slideUp {
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes float-slow {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(50px, 50px) rotate(180deg); }
+  100% { transform: translate(0, 0) rotate(360deg); }
+}
+
+@keyframes slide-up {
   from {
     opacity: 0;
     transform: translateY(30px);
@@ -10,81 +21,44 @@
   }
 }
 
-.animate-slide-up {
-  animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Material Icon Alignment Fix */
-mat-icon {
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Smooth Scrolling */
-:host {
-  scroll-behavior: smooth;
-}
-/* ============ Glassmorphism Effect ============ */
-.glass-card {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 32px 0 rgba(0, 70, 67, 0.1);
-}
-
-/* ============ Animations ============ */
-@keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
-    100% { transform: translateY(0px); }
-}
-
-@keyframes float-slow {
-    0% { transform: translate(0px, 0px) rotate(0deg); }
-    50% { transform: translate(50px, 50px) rotate(180deg); }
-    100% { transform: translate(0px, 0px) rotate(360deg); }
-}
-
-@keyframes slideUp {
-    from { opacity: 0; transform: translateY(40px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
 @keyframes pulse-subtle {
-    0%, 100% { border-color: #10b981; } /* emerald-500 */
-    50% { border-color: #34d399; } /* emerald-400 */
+  0%, 100% { border-color: #10b981; }
+  50% { border-color: #34d399; }
 }
 
 @keyframes spin-slow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+:host {
+  scroll-behavior: smooth;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 8px 32px rgba(0, 70, 67, 0.1);
 }
 
 .animate-float { animation: float 6s ease-in-out infinite; }
 .animate-float-slow { animation: float-slow 20s linear infinite; }
 .animate-float-slower { animation: float-slow 35s linear infinite reverse; }
-.animate-slide-up { animation: slideUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-slide-up { animation: slide-up 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .animate-pulse-subtle { animation: pulse-subtle 3s ease-in-out infinite; }
 .animate-spin-slow { animation: spin-slow 10s linear infinite; }
 .animate-bounce-subtle { animation: float 4s ease-in-out infinite; }
 
-
-/* ============ Utility Fixes ============ */
 mat-icon {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
 }
 
-/* For super large icons in background */
 mat-icon.large-icon {
-    height: auto;
-    width: auto;
-    font-size: inherit;
-}
-
-:host {
-    scroll-behavior: smooth;
+  height: auto;
+  width: auto;
+  font-size: inherit;
 }

@@ -1,7 +1,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* Angular Material Overlay FIX */
+
+:root {
+  --brand-primary: #004643;
+  --brand-background: #f0ede5;
+  --brand-surface: #ffffff;
+  --brand-text: #0f172a;
+  --brand-muted: #475569;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: linear-gradient(180deg, #f8fafc 0%, var(--brand-background) 100%);
+  color: var(--brand-text);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* Angular Material overlay + layering consistency */
 .cdk-overlay-container {
   z-index: 10000 !important;
   pointer-events: auto !important;
@@ -9,4 +40,25 @@
 
 .cdk-overlay-pane {
   pointer-events: auto !important;
+}
+
+.mat-mdc-card,
+.mat-mdc-dialog-surface,
+.mat-mdc-menu-panel {
+  border-radius: 16px !important;
+}
+
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+table[mat-table] {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+@media (max-width: 640px) {
+  .mat-mdc-snack-bar-container {
+    margin: 12px !important;
+  }
 }

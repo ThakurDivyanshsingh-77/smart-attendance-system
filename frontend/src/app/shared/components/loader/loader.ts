@@ -1,11 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-loader',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, MatProgressSpinnerModule],
   templateUrl: './loader.html',
   styleUrl: './loader.css',
 })
 export class Loader {
-
+  @Input() message = 'Loading...';
 }
