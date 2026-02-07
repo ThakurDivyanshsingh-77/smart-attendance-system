@@ -1,0 +1,92 @@
+<div class="min-h-screen px-6 py-10 bg-[#F0EDE5]">
+
+  <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-8 mb-6">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+      
+      <div>
+        <h2 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Live Session</h2>
+        <h1 class="text-3xl font-extrabold text-[#004643]">{{ subjectName }}</h1>
+        <div class="flex items-center gap-2 mt-2 text-[#004643]/70 font-mono text-lg">
+          <mat-icon>timer</mat-icon>
+          <span>{{ elapsedTime }} elapsed</span>
+        </div>
+      </div>
+
+      <div class="bg-[#F0EDE5] px-8 py-4 rounded-2xl flex flex-col items-center border-2 border-[#004643]/10">
+        <span class="text-xs font-bold text-gray-500 uppercase mb-1">Session Code</span>
+        <div class="flex items-center gap-3">
+          <span class="text-5xl font-black text-[#004643] tracking-widest">{{ sessionCode }}</span>
+          <button (click)="copyCode()" class="p-2 hover:bg-white rounded-full transition text-[#004643]">
+            <mat-icon>content_copy</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-8 min-h-[400px]">
+
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 border-b border-gray-100 pb-6">
+      
+      <div class="px-6 py-2 rounded-full bg-[#E4E1D8] text-[#004643] font-bold shadow-inner flex items-center gap-2">
+        <mat-icon>group</mat-icon>
+        <span class="text-lg">{{ totalPresent }} Students Present</span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        
+        <button 
+          (click)="refreshList()" 
+          class="px-5 py-2.5 rounded-xl border-2 border-[#004643] text-[#004643] font-bold hover:bg-[#F0EDE5] transition flex items-center gap-2">
+          <mat-icon [class.animate-spin]="loading">refresh</mat-icon>
+          Refresh List
+        </button>
+
+        <button 
+          (click)="endSession()" 
+          class="px-5 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-bold shadow-lg shadow-red-200 transition flex items-center gap-2">
+          <mat-icon>stop_circle</mat-icon>
+          End Session
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="loading && attendanceList.length === 0" class="flex justify-center py-12">
+      <div class="animate-spin rounded-full h-10 w-10 border-4 border-[#004643]/20 border-t-[#004643]"></div>
+    </div>
+
+    <div *ngIf="attendanceList.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in">
+      
+      <div *ngFor="let record of attendanceList" 
+           class="flex items-center justify-between p-4 rounded-2xl border border-gray-100 bg-[#F9F8F6] hover:shadow-md hover:border-[#004643]/20 transition-all cursor-default">
+        
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-full bg-[#004643] text-white flex items-center justify-center font-bold text-lg shadow-md">
+            {{ record.studentName?.charAt(0) || 'S' }}
+          </div>
+          
+          <div>
+            <p class="font-bold text-[#004643] text-lg leading-tight">{{ record.studentName || 'Unknown' }}</p>
+            <p class="text-sm text-gray-500 font-mono">Roll No: {{ record.rollNumber || 'N/A' }}</p>
+          </div>
+        </div>
+
+        <div class="flex flex-col items-end">
+          <span class="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-1 rounded-md mb-1">Present</span>
+          <span class="text-xs text-gray-400">{{ record.markedAt | date:'shortTime' }}</span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div *ngIf="!loading && attendanceList.length === 0" class="flex flex-col items-center justify-center py-20 text-center opacity-70">
+      <div class="w-24 h-24 bg-[#F0EDE5] rounded-full flex items-center justify-center mb-4">
+        <mat-icon class="text-[#004643]/40 text-5xl scale-125">qr_code_scanner</mat-icon>
+      </div>
+      <h3 class="text-xl font-bold text-[#004643]">Waiting for students...</h3>
+      <p class="text-gray-500 mt-2">Students will appear here instantly once they mark attendance.</p>
+    </div>
+
+  </div>
+</div>

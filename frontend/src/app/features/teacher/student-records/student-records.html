@@ -1,0 +1,126 @@
+<div class="min-h-screen bg-[#F4F7F6] p-6 md:p-10">
+
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-extrabold text-[#004643]">Student Records</h1>
+      <p class="text-gray-500">Filter students by Year & Semester to view analytics.</p>
+    </div>
+    <button mat-stroked-button (click)="goBack()" class="!border-[#004643] !text-[#004643] !font-bold !rounded-xl">
+      Back to Dashboard
+    </button>
+  </div>
+
+  <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+      
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Year</mat-label>
+        <mat-select [formControl]="yearControl" (selectionChange)="onYearChange()">
+          <mat-option [value]="1">1st Year</mat-option>
+          <mat-option [value]="2">2nd Year</mat-option>
+          <mat-option [value]="3">3rd Year</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Semester</mat-label>
+        <mat-select [formControl]="semesterControl">
+          <mat-option *ngFor="let s of semesters" [value]="s">Semester {{ s }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-flat-button (click)="fetchStudents()"
+              [disabled]="!yearControl.value || !semesterControl.value"
+              class="!bg-[#004643] !text-white !h-[56px] !rounded-lg !text-lg !font-bold shadow-lg">
+        <mat-icon>search</mat-icon> Find Students
+      </button>
+
+    </div>
+  </div>
+
+  <div *ngIf="students.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    
+    <div *ngFor="let student of students" 
+         (click)="viewStudentDetails(student)"
+         class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-[#004643]/30 transition cursor-pointer group">
+      
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-full bg-[#004643] text-white flex items-center justify-center font-bold text-xl group-hover:scale-110 transition">
+          {{ student.name.charAt(0) }}
+        </div>
+        <div>
+          <h3 class="font-bold text-[#004643] text-lg">{{ student.name }}</h3>
+          <p class="text-sm text-gray-500">{{ student.email }}</p>
+          <span class="inline-block mt-1 bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded font-mono">
+            Roll: {{ student.rollNo || 'N/A' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div *ngIf="students.length === 0 && !loading" class="text-center py-20 opacity-50">
+    <mat-icon class="text-6xl text-gray-300">groups</mat-icon>
+    <p class="mt-2 text-gray-500">Select filters to view students.</p>
+  </div>
+
+</div>
+
+<div *ngIf="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="closeModal()"></div>
+
+  <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl z-10 overflow-hidden animate-bounce-in max-h-[85vh] flex flex-col">
+    
+    <div class="bg-[#004643] p-6 text-white flex justify-between items-center shrink-0">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center font-bold text-xl">
+          {{ selectedStudent?.name.charAt(0) }}
+        </div>
+        <div>
+          <h2 class="text-xl font-bold">{{ selectedStudent?.name }}</h2>
+          <p class="opacity-80 text-sm">{{ selectedStudent?.email }}</p>
+        </div>
+      </div>
+      <button (click)="closeModal()" class="bg-white/10 hover:bg-white/20 p-2 rounded-full transition">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="p-6 overflow-y-auto grow bg-[#F8F9FA]">
+      
+      <div class="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6">
+        <span class="text-gray-500 font-bold uppercase text-xs">Overall Performance</span>
+        <span class="text-2xl font-black text-[#004643]">{{ studentOverall }}%</span>
+      </div>
+
+      <h3 class="text-[#004643] font-bold mb-4 flex items-center gap-2">
+        <mat-icon>subject</mat-icon> Subject Wise Attendance
+      </h3>
+
+      <div class="space-y-4">
+        <div *ngFor="let stat of studentSubjectStats" class="bg-white p-4 rounded-xl border border-gray-100">
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-bold text-gray-800">{{ stat.name }}</span>
+            <span class="font-bold" [ngClass]="stat.percentage >= 75 ? 'text-green-600' : 'text-red-500'">
+              {{ stat.percentage }}%
+            </span>
+          </div>
+          <mat-progress-bar mode="determinate" [value]="stat.percentage" 
+                            [color]="stat.percentage >= 75 ? 'primary' : 'warn'" class="h-2 rounded-full">
+          </mat-progress-bar>
+          <div class="flex justify-between mt-2 text-xs text-gray-400">
+            <span>Attended: {{ stat.present }}</span>
+            <span>Total: {{ stat.total }}</span>
+          </div>
+        </div>
+
+        <div *ngIf="studentSubjectStats.length === 0" class="text-center py-8 text-gray-400">
+          No attendance records found for this student.
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,110 @@
+.live-page {
+  padding: 24px;
+  background: #f5f6fa;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.live-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.live-header h1 {
+  margin: 0 0 10px;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.code-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.code-box .label {
+  font-size: 13px;
+  color: #666;
+}
+
+.code-box .code {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.copy-btn mat-icon {
+  font-size: 20px;
+}
+
+/* TIMER */
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* CENTER */
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+/* CONTENT */
+.content {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+}
+
+/* ACTION BAR */
+.action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+/* TABLE */
+.attendance-table {
+  width: 100%;
+}
+
+.attendance-table th {
+  font-weight: 600;
+  background: #fafafa;
+}
+
+.attendance-table tr:hover td {
+  background: #f7f7f7;
+}
+
+/* EMPTY */
+.empty {
+  text-align: center;
+  padding: 60px 0;
+  color: #888;
+}
+
+.empty mat-icon {
+  font-size: 48px;
+  margin-bottom: 10px;
+}

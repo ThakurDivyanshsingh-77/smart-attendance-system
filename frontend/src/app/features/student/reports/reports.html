@@ -1,0 +1,100 @@
+<div class="min-h-screen bg-[#F0EDE5] p-6 md:p-10">
+
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-extrabold text-[#004643]">My Attendance</h1>
+      <p class="text-[#004643]/70 font-medium">Track your academic progress</p>
+    </div>
+    <button mat-stroked-button (click)="goBack()" 
+            class="!border-[#004643] !text-[#004643] !font-bold !rounded-xl">
+      Back to Dashboard
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="flex flex-col items-center justify-center py-20">
+    <div class="animate-spin rounded-full h-10 w-10 border-4 border-[#004643]/20 border-t-[#004643]"></div>
+    <p class="mt-4 text-[#004643] font-bold">Loading report...</p>
+  </div>
+
+  <div *ngIf="!loading">
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      
+      <div class="bg-[#004643] text-white p-6 rounded-3xl shadow-xl flex items-center justify-between">
+        <div>
+          <p class="opacity-80 text-sm font-medium uppercase tracking-wider">Overall</p>
+          <h2 class="text-4xl font-black mt-1">{{ overallPercentage }}%</h2>
+        </div>
+        <div class="h-16 w-16 rounded-full border-4 border-white/20 flex items-center justify-center font-bold text-lg">
+          {{ overallPercentage }}%
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-3xl shadow-lg border border-[#004643]/10">
+        <div class="flex items-center gap-4">
+          <div class="bg-blue-100 p-3 rounded-xl text-blue-700">
+            <mat-icon>class</mat-icon>
+          </div>
+          <div>
+            <p class="text-gray-500 text-sm font-bold uppercase">Total Classes</p>
+            <h2 class="text-2xl font-black text-[#004643]">{{ totalLectures }}</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-3xl shadow-lg border border-[#004643]/10">
+        <div class="flex items-center gap-4">
+          <div class="bg-emerald-100 p-3 rounded-xl text-emerald-700">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+          <div>
+            <p class="text-gray-500 text-sm font-bold uppercase">Classes Attended</p>
+            <h2 class="text-2xl font-black text-[#004643]">{{ totalPresent }}</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="text-xl font-bold text-[#004643] mb-6 flex items-center gap-2">
+      <mat-icon>pie_chart</mat-icon> Subject Breakdown
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <div *ngFor="let sub of subjectStats" 
+           class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition">
+        
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h3 class="font-bold text-lg text-[#004643]">{{ sub.subjectName }}</h3>
+            <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-mono">
+              {{ sub.subjectCode }}
+            </span>
+          </div>
+          <span class="text-2xl font-black" 
+                [ngClass]="sub.percentage >= 75 ? 'text-emerald-600' : 'text-red-500'">
+            {{ sub.percentage }}%
+          </span>
+        </div>
+
+        <mat-progress-bar mode="determinate" [value]="sub.percentage" 
+                          class="rounded-full h-2 mb-3"
+                          [color]="sub.percentage >= 75 ? 'accent' : 'warn'">
+        </mat-progress-bar>
+
+        <div class="flex justify-between text-sm text-gray-500 font-medium">
+          <span>Attended: <b class="text-gray-800">{{ sub.presentCount }}</b></span>
+          <span>Total: <b class="text-gray-800">{{ sub.totalSessions }}</b></span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div *ngIf="subjectStats.length === 0" class="text-center py-20 opacity-60">
+      <mat-icon class="text-6xl text-gray-300">history_toggle_off</mat-icon>
+      <p class="text-gray-500 mt-2 font-medium">No attendance records found yet.</p>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,157 @@
+<div class="min-h-screen bg-[#F4F7F6]">
+
+  <mat-toolbar class="bg-white text-[#004643] px-6 shadow-sm sticky top-0 z-50 flex justify-between h-20">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-[#004643] rounded-lg flex items-center justify-center text-white shadow-md">
+        <mat-icon>school</mat-icon>
+      </div>
+      <span class="font-bold text-xl tracking-tight">Student Portal</span>
+    </div>
+    
+    <div class="flex items-center gap-4">
+      <div class="hidden md:block text-right">
+        <p class="text-sm font-bold text-[#004643] leading-tight">{{ user?.name }}</p>
+        <p class="text-xs text-gray-500">{{ user?.email }}</p>
+      </div>
+      <button mat-icon-button [matMenuTriggerFor]="menu" class="border border-gray-200 rounded-full !bg-white">
+        <mat-icon class="text-[#004643]">person</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu" class="mt-2">
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+    </div>
+  </mat-toolbar>
+
+  <div class="max-w-6xl mx-auto p-6 md:p-10 space-y-8 animate-fade-in">
+
+    <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
+      <div>
+        <p class="text-gray-500 font-medium uppercase tracking-wider text-xs mb-1">
+          {{ currentDate | date:'fullDate' }}
+        </p>
+        
+        <div class="flex items-center gap-3">
+          <h1 class="text-3xl md:text-4xl font-black text-[#004643]">
+            Hello, {{ firstName }}! 👋
+          </h1>
+          <button mat-icon-button (click)="fetchStats()" [disabled]="loading" 
+                  class="bg-white shadow-sm border border-gray-200 text-[#004643]">
+            <mat-icon [class.animate-spin]="loading">refresh</mat-icon>
+          </button>
+        </div>
+
+        <p class="text-gray-600 mt-1">Here is your daily academic summary.</p>
+      </div>
+      
+      <button (click)="markAttendance()" 
+              class="bg-[#004643] text-white px-6 py-3 rounded-xl shadow-lg hover:bg-[#003632] transition flex items-center gap-2 font-bold transform active:scale-95">
+        <mat-icon>pin</mat-icon> Enter Session Code
+      </button>
+    </div>
+
+    <div *ngIf="loading" class="flex flex-col items-center justify-center py-20 bg-white rounded-[2rem] shadow-sm border border-gray-100">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p class="mt-4 text-[#004643] font-bold animate-pulse">Syncing your records...</p>
+    </div>
+
+    <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
+      
+      <div class="bg-[#004643] text-white rounded-[2rem] p-8 shadow-xl relative overflow-hidden col-span-1 md:col-span-1">
+        <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+        <div class="absolute -left-10 -bottom-10 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
+        
+        <p class="text-white/70 font-bold uppercase text-xs tracking-widest mb-2">Overall Attendance</p>
+        <div class="flex items-end gap-2">
+          <h2 class="text-6xl font-black tracking-tighter">
+            {{ stats.percentage }}%
+          </h2>
+        </div>
+        
+        <div class="mt-6">
+          <mat-progress-bar mode="determinate" [value]="stats.percentage" class="rounded-full h-2 mb-2 !bg-white/20"></mat-progress-bar>
+          <p class="text-xs text-white/60">
+            {{ stats.percentage >= 75 ? '✅ You are doing great!' : '⚠️ Below 75% threshold.' }}
+          </p>
+        </div>
+      </div>
+
+      <div class="col-span-1 md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-center items-center hover:shadow-md transition">
+          <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-3">
+            <mat-icon>class</mat-icon>
+          </div>
+          <h3 class="text-2xl font-black text-gray-800">{{ stats.totalClasses }}</h3>
+          <p class="text-gray-400 text-xs font-bold uppercase">Total Classes</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-center items-center hover:shadow-md transition">
+          <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mb-3">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+          <h3 class="text-2xl font-black text-gray-800">{{ stats.present }}</h3>
+          <p class="text-gray-400 text-xs font-bold uppercase">Present</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-center items-center hover:shadow-md transition">
+          <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mb-3">
+            <mat-icon>cancel</mat-icon>
+          </div>
+          <h3 class="text-2xl font-black text-gray-800">{{ stats.absent }}</h3>
+          <p class="text-gray-400 text-xs font-bold uppercase">Absent</p>
+        </div>
+
+      </div>
+    </div>
+
+    <div>
+      <h3 class="text-lg font-bold text-[#004643] mb-4 flex items-center gap-2">
+        <mat-icon>bolt</mat-icon> Quick Actions
+      </h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div (click)="markAttendance()" 
+             class="group bg-white p-6 rounded-2xl shadow-sm border border-gray-100 cursor-pointer hover:border-[#004643] hover:shadow-lg transition duration-300">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center group-hover:bg-[#004643] group-hover:text-white transition duration-300">
+              <mat-icon class="scale-125">pin</mat-icon>
+            </div>
+            <mat-icon class="text-gray-300 group-hover:translate-x-1 transition">arrow_forward</mat-icon>
+          </div>
+          <h4 class="text-lg font-bold text-gray-800 group-hover:text-[#004643]">Mark Attendance</h4>
+          <p class="text-sm text-gray-500 mt-1">Enter 4-digit code to join.</p>
+        </div>
+
+        <div (click)="viewHistory()" 
+             class="group bg-white p-6 rounded-2xl shadow-sm border border-gray-100 cursor-pointer hover:border-[#004643] hover:shadow-lg transition duration-300">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center group-hover:bg-[#004643] group-hover:text-white transition duration-300">
+              <mat-icon class="scale-125">history</mat-icon>
+            </div>
+            <mat-icon class="text-gray-300 group-hover:translate-x-1 transition">arrow_forward</mat-icon>
+          </div>
+          <h4 class="text-lg font-bold text-gray-800 group-hover:text-[#004643]">Attendance History</h4>
+          <p class="text-sm text-gray-500 mt-1">View past logs and dates.</p>
+        </div>
+
+        <div (click)="viewReports()" 
+             class="group bg-white p-6 rounded-2xl shadow-sm border border-gray-100 cursor-pointer hover:border-[#004643] hover:shadow-lg transition duration-300">
+          <div class="flex justify-between items-start mb-4">
+            <div class="w-14 h-14 bg-cyan-50 text-cyan-600 rounded-2xl flex items-center justify-center group-hover:bg-[#004643] group-hover:text-white transition duration-300">
+              <mat-icon class="scale-125">bar_chart</mat-icon>
+            </div>
+            <mat-icon class="text-gray-300 group-hover:translate-x-1 transition">arrow_forward</mat-icon>
+          </div>
+          <h4 class="text-lg font-bold text-gray-800 group-hover:text-[#004643]">Detailed Reports</h4>
+          <p class="text-sm text-gray-500 mt-1">Analyze subject-wise performance.</p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

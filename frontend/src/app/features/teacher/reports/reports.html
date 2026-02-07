@@ -1,0 +1,232 @@
+<div class="min-h-screen p-6 md:p-10 space-y-10 bg-[#F0EDE5]">
+
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-extrabold text-[#004643]">
+        Attendance Reports
+      </h1>
+      <p class="text-[#004643]/70 mt-1 font-medium">
+        View detailed insights and student lists
+      </p>
+    </div>
+
+    <button mat-flat-button (click)="goBack()" 
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#004643] text-[#F0EDE5] shadow-lg hover:shadow-xl hover:bg-[#003632] transition font-bold tracking-wide">
+      <mat-icon>arrow_back</mat-icon> Back to Dashboard
+    </button>
+  </div>
+
+  <div class="bg-white rounded-[2rem] shadow-xl p-8 border border-[#004643]/10">
+    <h2 class="text-xl font-bold text-[#004643] mb-6 flex items-center gap-2">
+      <mat-icon>filter_list</mat-icon> Filter Records
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <mat-form-field appearance="outline" class="w-full custom-field">
+        <mat-label>Select Subject</mat-label>
+        <mat-select [formControl]="subjectControl">
+          <mat-option value="">View All Subjects</mat-option>
+          <mat-option *ngFor="let s of subjects" [value]="s._id">
+            {{ s.name }} ({{ s.code }})
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full custom-field">
+        <mat-label>From Date</mat-label>
+        <input matInput [matDatepicker]="fromPicker" [formControl]="fromDateControl">
+        <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+        <mat-datepicker #fromPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full custom-field">
+        <mat-label>To Date</mat-label>
+        <input matInput [matDatepicker]="toPicker" [formControl]="toDateControl">
+        <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+        <mat-datepicker #toPicker></mat-datepicker>
+      </mat-form-field>
+
+    </div>
+  </div>
+
+
+  <div *ngIf="loading" class="flex flex-col items-center justify-center py-20">
+    <mat-spinner diameter="60" class="custom-spinner"></mat-spinner>
+    <p class="mt-4 text-[#004643] font-bold animate-pulse">Loading data...</p>
+  </div>
+
+  <div *ngIf="!loading" class="space-y-10">
+
+    <div class="bg-white rounded-[2rem] shadow-xl overflow-hidden border border-[#004643]/10">
+      <div class="p-8 bg-[#004643] flex justify-between items-center">
+        <h2 class="text-xl font-bold text-[#F0EDE5] flex items-center gap-2">
+          <mat-icon>table_chart</mat-icon> Session History
+        </h2>
+        <span class="bg-[#F0EDE5]/10 text-[#F0EDE5] px-4 py-1 rounded-full text-sm font-mono">
+          {{ filteredSessions.length }} Records Found
+        </span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table mat-table [dataSource]="filteredSessions" class="w-full">
+
+          <ng-container matColumnDef="subject">
+            <th mat-header-cell *matHeaderCellDef class="bg-[#F8F7F4] text-[#004643] font-bold py-4 px-6"> Subject </th>
+            <td mat-cell *matCellDef="let s" class="px-6 py-4 font-semibold text-[#004643]">
+              {{ s.subject?.name }} 
+              <span class="text-xs text-gray-500 block font-normal">{{ s.subject?.code }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef class="bg-[#F8F7F4] text-[#004643] font-bold py-4 px-6"> Date & Time </th>
+            <td mat-cell *matCellDef="let s" class="px-6 py-4 text-gray-700">
+              {{ s.startTime | date:'medium' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="present">
+            <th mat-header-cell *matHeaderCellDef class="bg-[#F8F7F4] text-[#004643] font-bold py-4 px-6"> Attendance </th>
+            <td mat-cell *matCellDef="let s" class="px-6 py-4">
+              <span class="inline-flex items-center px-3 py-1 rounded-lg bg-emerald-100 text-emerald-800 font-bold text-sm">
+                {{ s.totalPresent }} Students
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef class="bg-[#F8F7F4] text-[#004643] font-bold py-4 px-6"> Status </th>
+            <td mat-cell *matCellDef="let s" class="px-6 py-4">
+              <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border"
+                [ngClass]="s.isExpired ? 'bg-gray-100 text-gray-600 border-gray-200' : 'bg-green-100 text-green-700 border-green-200 animate-pulse'">
+                {{ s.isExpired ? 'Completed' : 'Live Now' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="bg-[#F8F7F4] text-[#004643] font-bold py-4 px-6 text-right"> Actions </th>
+            <td mat-cell *matCellDef="let s" class="px-6 py-4 text-right">
+              <button mat-stroked-button color="primary" (click)="viewStudentList(s)"
+                      class="!rounded-lg !border-[#004643] !text-[#004643] font-bold hover:!bg-[#004643] hover:!text-white transition">
+                View List
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-[#F0EDE5]/50 transition border-b border-gray-100"></tr>
+
+        </table>
+      </div>
+
+      <div *ngIf="filteredSessions.length === 0" class="text-center py-20 bg-white">
+        <mat-icon class="text-6xl text-gray-200 mb-4">search_off</mat-icon>
+        <p class="text-gray-500 font-medium text-lg">No records found matching your filters.</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+
+      <div class="bg-white rounded-[2rem] shadow-xl overflow-hidden border border-[#004643]/10">
+        <div class="p-6 border-b border-gray-100 bg-[#F8F7F4]">
+          <h2 class="text-lg font-bold text-[#004643] flex items-center gap-2">
+            <mat-icon>calendar_today</mat-icon> Monthly Summary
+          </h2>
+        </div>
+        <div class="overflow-x-auto">
+          <table mat-table [dataSource]="monthlySummary" class="w-full">
+            <ng-container matColumnDef="month">
+              <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-gray-500 font-bold text-xs uppercase">Month</th>
+              <td mat-cell *matCellDef="let m" class="px-6 py-4 font-bold text-[#004643]">{{ m.month }}</td>
+            </ng-container>
+            <ng-container matColumnDef="sessions">
+              <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-gray-500 font-bold text-xs uppercase">Sessions</th>
+              <td mat-cell *matCellDef="let m" class="px-6 py-4 text-gray-700">{{ m.sessions }}</td>
+            </ng-container>
+            <ng-container matColumnDef="present">
+              <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-gray-500 font-bold text-xs uppercase">Total Attendance</th>
+              <td mat-cell *matCellDef="let m" class="px-6 py-4 text-emerald-700 font-bold">+{{ m.present }}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="['month','sessions','present']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['month','sessions','present'];" class="border-b border-gray-50 hover:bg-gray-50"></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-[2rem] shadow-xl overflow-hidden border border-[#004643]/10">
+        <div class="p-6 border-b border-gray-100 bg-[#F8F7F4]">
+          <h2 class="text-lg font-bold text-[#004643] flex items-center gap-2">
+            <mat-icon>bar_chart</mat-icon> Attendance Trends
+          </h2>
+        </div>
+        <div class="p-6 h-[300px]">
+          <canvas baseChart [data]="chartData" [type]="chartType" [options]="{ maintainAspectRatio: false }"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+  </div> <div *ngIf="showStudentModal" class="fixed inset-0 z-[999] flex items-center justify-center p-4">
+    
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" (click)="closeModal()"></div>
+
+    <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl z-50 overflow-hidden transform transition-all scale-100 animate-fade-in flex flex-col max-h-[85vh]">
+      
+      <div class="bg-[#004643] p-6 flex justify-between items-center shrink-0">
+        <div>
+          <h3 class="text-white font-bold text-xl">Present Students</h3>
+          <p class="text-[#F0EDE5]/70 text-sm mt-1 flex items-center gap-1">
+            <mat-icon class="text-sm h-4 w-4">event</mat-icon> 
+            {{ selectedSessionDate | date:'fullDate' }}
+          </p>
+        </div>
+        <button (click)="closeModal()" class="text-white/70 hover:text-white bg-white/10 hover:bg-white/20 rounded-full p-2 transition">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="overflow-y-auto p-6 space-y-3 bg-[#F8F7F4] grow">
+        
+        <div *ngFor="let student of selectedStudents; let i = index" 
+             class="flex items-center justify-between p-4 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition group">
+          
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full bg-[#004643] text-white flex items-center justify-center font-bold text-sm shadow-md group-hover:scale-110 transition">
+              {{ i + 1 }}
+            </div>
+            
+            <div>
+              <p class="font-bold text-[#004643] text-base">{{ student?.name || 'Unknown Student' }}</p>
+              <div class="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
+                <span class="bg-gray-100 px-2 py-0.5 rounded text-gray-600 font-mono">
+                  {{ student?.rollNumber || student?.rollNo || 'N/A' }}
+                </span>
+                <span>{{ student?.email }}</span>
+              </div>
+            </div>
+          </div>
+
+          <span class="flex items-center gap-1 px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full uppercase tracking-wider">
+            <mat-icon class="text-sm h-4 w-4">check_circle</mat-icon> Present
+          </span>
+        </div>
+
+        <div *ngIf="selectedStudents.length === 0" class="text-center py-12">
+          <mat-icon class="text-4xl text-gray-300 mb-2">people_outline</mat-icon>
+          <p class="text-gray-400 font-medium">No student details available for this session.</p>
+        </div>
+
+      </div>
+
+      <div class="p-4 bg-white border-t border-gray-100 text-right shrink-0">
+        <button mat-flat-button (click)="closeModal()" class="!bg-gray-200 !text-gray-800 hover:!bg-gray-300 font-bold px-6 py-2 rounded-xl">
+          Close List
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

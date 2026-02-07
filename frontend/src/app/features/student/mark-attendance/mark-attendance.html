@@ -1,0 +1,144 @@
+<!-- PAGE BACKGROUND -->
+<div class="min-h-screen bg-[#F4F1EA] px-4 py-10">
+
+  <!-- CENTER WRAPPER -->
+  <div class="max-w-xl mx-auto">
+
+    <!-- BACK BUTTON -->
+    <button
+      (click)="goBack()"
+      class="mb-6 inline-flex items-center gap-2
+             px-4 py-2 rounded-xl
+             bg-white shadow-md
+             text-gray-700 font-medium
+             hover:shadow-lg transition">
+      <mat-icon class="text-base">arrow_back</mat-icon>
+      Back
+    </button>
+
+    <!-- MAIN CARD -->
+    <div
+      class="bg-white rounded-[2.2rem]
+             shadow-[0_25px_60px_rgba(0,0,0,0.15)]
+             px-6 sm:px-10 py-10">
+
+      <!-- TITLE -->
+      <div class="text-center mb-10">
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-[#054A47]">
+          Mark Attendance
+        </h1>
+        <p class="mt-2 text-gray-600">
+          Enter the session code shared by your teacher
+        </p>
+      </div>
+
+      <!-- ACTIVE SESSIONS -->
+      <div *ngIf="activeSessions.length > 0" class="mb-10">
+
+        <h3 class="text-lg font-semibold text-gray-700 mb-4">
+          Live Sessions
+        </h3>
+
+        <div class="space-y-4">
+          <div
+            *ngFor="let session of activeSessions"
+            class="flex items-center justify-between
+                   bg-[#F4F1EA]
+                   rounded-2xl px-5 py-4
+                   shadow-sm hover:shadow-md transition">
+
+            <div>
+              <p class="font-semibold text-gray-800">
+                {{ session.subject.name }}
+              </p>
+              <p class="text-sm text-gray-600">
+                {{ session.teacher.name }} •
+                {{ getTimeRemaining(session.expiryTime) }}
+              </p>
+            </div>
+
+            <!-- ICON (SAME AS STUDENT DASHBOARD) -->
+            <div
+              class="h-10 w-10 rounded-xl
+                     bg-white shadow
+                     flex items-center justify-center">
+              <mat-icon class="text-[#054A47]">schedule</mat-icon>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- NO SESSION -->
+      <div
+        *ngIf="activeSessions.length === 0 && !loading"
+        class="text-center mb-10">
+
+        <div
+          class="mx-auto mb-3 h-12 w-12 rounded-xl
+                 bg-[#F4F1EA]
+                 flex items-center justify-center">
+          <mat-icon class="text-[#054A47]">info</mat-icon>
+        </div>
+
+        <p class="text-gray-600">
+          No active session available
+        </p>
+
+        <button
+          class="mt-2 text-[#054A47] font-medium hover:underline"
+          (click)="refreshSessions()">
+          Refresh
+        </button>
+      </div>
+
+      <!-- SESSION CODE -->
+      <div class="text-center">
+
+        <h3 class="text-xl font-semibold text-gray-800 mb-6">
+          Session Code
+        </h3>
+
+        <!-- CODE INPUT -->
+        <input
+          type="text"
+          maxlength="4"
+          placeholder="• • • •"
+          [formControl]="codeControl"
+          (keyup.enter)="submitCode()"
+          class="w-56 mx-auto text-center
+                 text-3xl tracking-[1rem]
+                 bg-transparent border-b-4
+                 border-[#054A47]/30
+                 focus:border-[#054A47]
+                 focus:outline-none
+                 pb-3 transition" />
+
+        <p *ngIf="codeControl.invalid && codeControl.touched"
+           class="text-rose-500 text-sm mt-3">
+          Enter a valid 4-digit code
+        </p>
+
+        <!-- SUBMIT BUTTON -->
+        <button
+          (click)="submitCode()"
+          [disabled]="codeControl.invalid || submitting"
+          class="mt-10 w-full h-14 rounded-2xl
+                 bg-[#054A47] text-white
+                 font-bold text-lg
+                 shadow-[0_12px_30px_rgba(5,74,71,0.4)]
+                 hover:bg-[#043f3c]
+                 hover:scale-[1.03]
+                 active:scale-[0.97]
+                 transition
+                 flex items-center justify-center gap-3">
+
+          <span *ngIf="!submitting">Mark Present</span>
+          <mat-spinner *ngIf="submitting" diameter="26"></mat-spinner>
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+</div>

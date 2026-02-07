@@ -1,0 +1,99 @@
+<div class="min-h-screen bg-[#F0EDE5] px-6 py-8">
+
+  <div class="max-w-7xl mx-auto mb-8 bg-white rounded-[2.2rem] shadow-[0_20px_60px_rgba(0,0,0,0.12)] p-8 flex justify-between items-center flex-wrap gap-6">
+
+    <div>
+      <h1 class="text-3xl font-extrabold text-[#004643]">
+        Live Attendance
+      </h1>
+
+      <div class="mt-4 inline-flex items-center gap-3 bg-[#F0EDE5] px-5 py-2 rounded-xl">
+        <span class="text-sm font-medium text-[#004643]/70">
+          Session Code
+        </span>
+
+        <span class="text-xl font-extrabold tracking-widest text-[#004643]">
+          {{ sessionCode || '----' }}
+        </span>
+
+        <button mat-icon-button class="bg-white rounded-lg shadow" (click)="copySessionCode()">
+          <mat-icon class="text-[#004643]">content_copy</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3 bg-[#F0EDE5] px-5 py-3 rounded-xl text-[#004643] font-bold text-lg">
+      <mat-icon>schedule</mat-icon>
+      {{ formatTime(timeRemaining) }}
+    </div>
+
+  </div>
+
+  <div *ngIf="loading" class="flex justify-center py-32">
+    <mat-spinner diameter="70"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading" class="max-w-7xl mx-auto bg-white rounded-[2.2rem] shadow-[0_25px_70px_rgba(0,0,0,0.15)] p-8">
+
+    <div class="flex justify-between items-center flex-wrap gap-4 mb-8">
+
+      <div class="flex items-center gap-3 bg-[#F0EDE5] px-5 py-2 rounded-xl text-[#004643] font-semibold">
+        <mat-icon>groups</mat-icon>
+        {{ attendanceList.length }} Present
+      </div>
+
+      <button 
+        mat-raised-button 
+        color="warn" 
+        class="rounded-xl px-6 py-2"
+        (click)="endSession()">
+        End Session
+      </button>
+    </div>
+
+    <div *ngIf="attendanceList.length > 0" class="overflow-x-auto">
+      <table mat-table [dataSource]="attendanceList" class="w-full">
+
+        <ng-container matColumnDef="rollNumber">
+          <th mat-header-cell *matHeaderCellDef class="text-left py-4 text-[#004643] font-semibold">
+            Roll No
+          </th>
+          <td mat-cell *matCellDef="let s" class="py-4 text-[#004643] font-medium">
+            {{ s.rollNumber }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="studentName">
+          <th mat-header-cell *matHeaderCellDef class="text-left py-4 text-[#004643] font-semibold">
+            Student Name
+          </th>
+          <td mat-cell *matCellDef="let s" class="py-4 text-[#004643]">
+            {{ s.studentName }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="markedAt">
+          <th mat-header-cell *matHeaderCellDef class="text-left py-4 text-[#004643] font-semibold">
+            Marked At
+          </th>
+          <td mat-cell *matCellDef="let s" class="py-4 text-[#004643]/80">
+            {{ s.markedAt | date:'shortTime' }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns" class="border-b border-[#004643]/15"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" class="hover:bg-[#F0EDE5] transition"></tr>
+      </table>
+    </div>
+
+    <div *ngIf="attendanceList.length === 0" class="py-28 text-center">
+      <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-[#F0EDE5] flex items-center justify-center">
+        <mat-icon class="text-[#004643] text-5xl">hourglass_empty</mat-icon>
+      </div>
+      <p class="text-lg font-semibold text-[#004643]">
+        No student marked yet
+      </p>
+    </div>
+
+  </div>
+</div>

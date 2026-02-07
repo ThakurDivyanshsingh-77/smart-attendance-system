@@ -1,0 +1,86 @@
+<div class="min-h-screen px-4 py-8 md:px-8 md:py-12 bg-[#F0EDE5]">
+
+  <div class="max-w-5xl mx-auto mb-8 bg-white rounded-3xl shadow-xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+
+    <div class="flex items-center gap-5">
+      <div class="w-14 h-14 rounded-2xl bg-[#E4E1D8] text-[#004643] flex items-center justify-center shadow-sm">
+        <mat-icon class="scale-125">history</mat-icon>
+      </div>
+
+      <div>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-[#004643]">
+          Attendance History
+        </h1>
+        <p class="text-[#004643]/70 text-sm md:text-base font-medium">
+          View all your past attendance records
+        </p>
+      </div>
+    </div>
+
+    <button (click)="goBack()" 
+            class="px-6 py-2.5 rounded-xl border-2 border-[#004643] text-[#004643] font-bold hover:bg-[#004643] hover:text-[#F0EDE5] transition-all shadow-sm hover:shadow-md">
+      ← Back to Dashboard
+    </button>
+
+  </div>
+
+  <div class="max-w-5xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden min-h-[400px]">
+
+    <div *ngIf="loading" class="flex flex-col items-center justify-center py-20">
+      <div class="animate-spin rounded-full h-10 w-10 border-4 border-[#004643]/20 border-t-[#004643] mb-4"></div>
+      <p class="text-[#004643]/60 font-medium">Loading records...</p>
+    </div>
+
+    <div *ngIf="!loading && records.length > 0" class="overflow-x-auto">
+      <table mat-table [dataSource]="records" class="w-full">
+
+        <ng-container matColumnDef="subject">
+          <th mat-header-cell *matHeaderCellDef class="py-5 px-6 bg-[#F8F7F4] text-[#004643] font-bold text-sm uppercase tracking-wider text-left">
+            Subject
+          </th>
+          <td mat-cell *matCellDef="let r" class="py-4 px-6 border-b border-gray-100">
+            <div class="font-bold text-[#004643] text-lg">{{ r.subject?.name || 'Unknown' }}</div>
+            <div class="text-xs text-[#004643]/50 font-mono">{{ r.subject?.code || '-' }}</div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef class="py-5 px-6 bg-[#F8F7F4] text-[#004643] font-bold text-sm uppercase tracking-wider text-left">
+            Date & Time
+          </th>
+          <td mat-cell *matCellDef="let r" class="py-4 px-6 border-b border-gray-100 text-[#004643]/80 font-medium">
+            {{ r.markedAt | date:'medium' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="py-5 px-6 bg-[#F8F7F4] text-[#004643] font-bold text-sm uppercase tracking-wider text-left">
+            Status
+          </th>
+          <td mat-cell *matCellDef="let r" class="py-4 px-6 border-b border-gray-100">
+            <span class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span>
+              Present
+            </span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-[#F0EDE5]/30 transition-colors"></tr>
+
+      </table>
+    </div>
+
+    <div *ngIf="!loading && records.length === 0" class="flex flex-col items-center justify-center py-24 text-center">
+      <div class="w-20 h-20 rounded-full bg-[#F0EDE5] flex items-center justify-center mb-4">
+        <mat-icon class="text-[#004643]/40 text-4xl scale-125">event_busy</mat-icon>
+      </div>
+      <h3 class="text-xl font-bold text-[#004643]">No Attendance Found</h3>
+      <p class="mt-2 text-[#004643]/60 max-w-xs mx-auto">
+        You haven't marked attendance for any classes yet.
+      </p>
+    </div>
+
+  </div>
+
+</div>
